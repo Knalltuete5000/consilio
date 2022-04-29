@@ -1,5 +1,9 @@
 package model
 
+type Content struct {
+	Content []DynamicElement `json:"content"`
+}
+
 // DynamicElement
 type DynamicElement struct {
 	Name   string      `json:"Name"`
@@ -16,4 +20,5 @@ type FieldType struct {
 	MaxItems      int          `json:"MaxItems,omitempty"`
 	MinItems      int          `json:"MinItems,omitempty"`
 	Subfields     *[]FieldType `json:"Subfields,omitempty"`
+	Value         string       `json:"value,omitempty"`
 }

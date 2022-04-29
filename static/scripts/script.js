@@ -337,7 +337,7 @@ function serializeFormData() {
     
                     case "Bool":                                                //This corresponds to an <input type="checkbox">
                         if(targetInputElement.checked) {
-                            currentField.value = true;
+                            currentField.value = "true";
                         }
                         break;
     
@@ -375,7 +375,7 @@ function saveToFile(event) {
 function sendToServer(event) {
     //Retrieve content from the form
     let content = serializeFormData();
-
+    console.log(content);
     // Creating a XHR object
     let xhr = new XMLHttpRequest();
     let url = "/projects/1";
@@ -398,7 +398,7 @@ function sendToServer(event) {
     
     // Converting JSON data to string
     var data = JSON.stringify({content});
-
+    console.log(data);
     // Sending data with the request
     xhr.send(data);
 }
