@@ -1,0 +1,14 @@
+{
+    "language": "go",
+    "app": "go run main.go",
+    "codeMakerOutput": "provider",
+    "projectId": "79e0ab9d-d6e6-4bf7-9ed4-d37a57733924",
+    "terraformProviders": [
+        "dmacvicar/libvirt"
+    ],
+    "terraformModules": [],
+    "context": {
+        "excludeStackIdFromLogicalIds": "true",
+        "allowSepCharsInLogicalIds": "true"
+    }
+}

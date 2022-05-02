@@ -1,18 +1,18 @@
 # consilio
+
 Consilio is an open source application to visualize and manage Terraform configurations and deployments.
 
-
-
 ## Requirements
+
 * git
 * golang 1.17
 * libvirt-dev package
+* [cdktf by Terraform](https://learn.hashicorp.com/tutorials/terraform/cdktf-install?in=terraform/cdktf)
 
 ## Quick Start
 
-To start the application, execute ```go mod tidy && go run cmd/consilio/main.go```.
+To start the application, execute ```cdktf get && go mod tidy && go run cmd/consilio/main.go```.
 The frontend, delivered by the golang server, will be reachable at ```http://localhost:33334```.
-
 
 ## TODO:
 
