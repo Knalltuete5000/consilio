@@ -24,7 +24,8 @@ async function init() {
  * @return {Object} Hierarchic list of all available parameters as specified by the provider
 */
 async function fetchAvailableFields() {
-	const response = await fetch('http://localhost:33334/api?provider=libvirt')
+	const host = window.location.hostname;
+	const response = await fetch(`http://${host}:33334/api?provider=libvirt`)
 	if (!response.ok) {
 		const message = `An error has occured: ${response.status}`;
 		throw new Error(message);
@@ -375,7 +376,6 @@ function saveToFile(event) {
 function sendToServer(event) {
     //Retrieve content from the form
     let content = serializeFormData();
-    console.log(content);
     // Creating a XHR object
     let xhr = new XMLHttpRequest();
     let url = "/projects/1";
@@ -396,11 +396,7 @@ function sendToServer(event) {
         }
     };
     
-    // Converting JSON data to string
-    var data = JSON.stringify({content});
-    console.log(data);
-    // Sending data with the request
-    xhr.send(data);
+    xhr.send(content);
 }
 
 //Pseudo Struct to allow us to hold three values for every key in a map

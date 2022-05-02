@@ -1,9 +1,5 @@
 package model
 
-type Content struct {
-	Content []DynamicElement `json:"content"`
-}
-
 // DynamicElement
 type DynamicElement struct {
 	Name   string      `json:"Name"`
