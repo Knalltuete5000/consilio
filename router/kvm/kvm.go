@@ -27,3 +27,24 @@ func GetLibvirtFields() []model.DynamicElement {
 
 	return result
 }
+
+func ToLibvirtFields(models []model.DynamicElement) map[string]*schema.Resource {
+	var resourceMap map[string]*schema.Resource
+	for _, model := range models {
+		var resource schema.Resource
+		for _, field := range model.Fields {
+			resource.Schema[field.Name] = CreateSchema(field)
+		}
+	}
+	return resourceMap
+}
+
+func CreateSchema(field model.FieldType) *schema.Schema {
+	var s *schema.Schema
+
+	return s
+}
+
+func HasSubFields(field model.FieldType) bool {
+	return field.Subfields != nil
+}

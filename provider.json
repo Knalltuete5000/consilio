@@ -1,0 +1,87 @@
+{
+    "Schema": {
+        "uri":{
+            "Type": "",
+            "Required": "",
+            "DefaultFunc": "",
+            "Description": ""
+        }
+    },
+    "ResourcesMap":{
+        "libvirt_cloudinit_disk":{
+            "Schema":{
+                "name":{
+                    "Type": "",
+                    "Required": true,
+                    "ForceNew": true,
+                    "Optional": true,
+                    "Default": ""
+                },
+                "pool":{
+                    "Type": "",
+                    "Required": true,
+                    "ForceNew": true,
+                    "Optional": true,
+                    "Default": ""
+                },
+                "user_data":{
+                    "Type": "",
+                    "Required": true,
+                    "ForceNew": true,
+                    "Optional": true,
+                    "Default": ""
+                },
+                "meta_data":{
+                    "Type": "",
+                    "Required": true,
+                    "ForceNew": true,
+                    "Optional": true,
+                    "Default": ""
+                },
+                "network_config":{
+                    "Type": "",
+                    "Required": true,
+                    "ForceNew": true,
+                    "Optional": true,
+                    "Default": ""
+                }
+            }
+        },
+        "libvirt_domain":{
+            "Schema":{
+
+            }
+        },
+        "libvirt_volume":{
+            "Schema":{
+                
+            }
+        },
+        "libvirt_network":{
+            "Schema":{
+                
+            }
+        },
+        "libvirt_pool":{
+            "Schema":{
+                
+            }
+        },
+        "libvirt_ignition":{
+            "Schema":{
+                
+            }
+        }
+    },
+    "DataSourcesMap":{
+        "libvirt_network_dns_host_template":{
+
+        },
+        "libvirt_network_dns_srv_template":{
+
+        },
+        "libvirt_network_dnsmasq_options_template":{
+
+        }
+    }
+}

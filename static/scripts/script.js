@@ -381,7 +381,7 @@ function sendToServer(event) {
     let url = "/projects/1";
     
     // open a connection
-    xhr.open("GET", url, true);
+    xhr.open("PUT", url, true);
   
     // Set the request header i.e. which type of content you are sending
     xhr.setRequestHeader("Content-Type", "application/json");

@@ -1,0 +1,624 @@
+[
+    {
+        "Name": "libvirt_cloudinit_disk",
+        "Fields": [
+            {
+                "Name": "meta_data",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "name",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "network_config",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "pool",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "user_data",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            }
+        ]
+    },
+    {
+        "Name": "libvirt_domain",
+        "Fields": [
+            {
+                "Name": "autostart",
+                "Type": "Bool",
+                "Required": false,
+                "value": "true"
+            },
+            {
+                "Name": "boot_device",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "dev",
+                        "Type": "List",
+                        "Required": false,
+                        "Subfields": [
+                            {
+                                "Name": "",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            }
+                        ],
+                        "value": ""
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "cloudinit",
+                "Type": "String",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "type",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": "hello"
+            },
+            {
+                "Name": "cmdline",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "",
+                        "Type": "Map",
+                        "Required": false,
+                        "value": "/bin/bash"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "console",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "source_host",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "source_path",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "source_service",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "target_port",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "target_type",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "type",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "coreos_ignition",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "cpu",
+                "Type": "Map",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "mode",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    }
+                ],
+                "value": "hello"
+            },
+            {
+                "Name": "description",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "disk",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "block_device",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "file",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "url",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "volume_id",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "wwn",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "filesystem",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "accessmode",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "source",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "target",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "firmware",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "fw_cfg_name",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "graphics",
+                "Type": "List",
+                "Required": false,
+                "MaxItems": 1,
+                "Subfields": [
+                    {
+                        "Name": "listen_address",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "listen_type",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "type",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "initrd",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "kernel",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "memory",
+                "Type": "Int",
+                "Required": false,
+                "value": "1024"
+            },
+            {
+                "Name": "metadata",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "name",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "network_interface",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "bridge",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "macvtap",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "passthrough",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "vepa",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "nvram",
+                "Type": "List",
+                "Required": false,
+                "MaxItems": 1,
+                "Subfields": [
+                    {
+                        "Name": "file",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "template",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "vcpu",
+                "Type": "Int",
+                "Required": false,
+                "value": "5"
+            },
+            {
+                "Name": "video",
+                "Type": "List",
+                "Required": false,
+                "MaxItems": 1,
+                "Subfields": [
+                    {
+                        "Name": "type",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            }
+        ]
+    },
+    {
+        "Name": "libvirt_ignition",
+        "Fields": [
+            {
+                "Name": "content",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "name",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "pool",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            }
+        ]
+    },
+    {
+        "Name": "libvirt_network",
+        "Fields": [
+            {
+                "Name": "addresses",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "",
+                        "Type": "String",
+                        "Required": false,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "dns",
+                "Type": "List",
+                "Required": false,
+                "MaxItems": 1,
+                "Subfields": [
+                    {
+                        "Name": "forwarders",
+                        "Type": "List",
+                        "Required": false,
+                        "Subfields": [
+                            {
+                                "Name": "address",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "domain",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            }
+                        ],
+                        "value": ""
+                    },
+                    {
+                        "Name": "hosts",
+                        "Type": "List",
+                        "Required": false,
+                        "Subfields": [
+                            {
+                                "Name": "hostname",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "ip",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            }
+                        ],
+                        "value": ""
+                    },
+                    {
+                        "Name": "srvs",
+                        "Type": "List",
+                        "Required": false,
+                        "Subfields": [
+                            {
+                                "Name": "domain",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "port",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "priority",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "protocol",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "service",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "target",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            },
+                            {
+                                "Name": "weight",
+                                "Type": "String",
+                                "Required": false,
+                                "value": "hello"
+                            }
+                        ],
+                        "value": ""
+                    }
+                ],
+                "value": ""
+            },
+            {
+                "Name": "domain",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "mode",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "mtu",
+                "Type": "Int",
+                "Required": false,
+                "value": "3"
+            },
+            {
+                "Name": "name",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "routes",
+                "Type": "List",
+                "Required": false,
+                "Subfields": [
+                    {
+                        "Name": "cidr",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    },
+                    {
+                        "Name": "gateway",
+                        "Type": "String",
+                        "Required": true,
+                        "value": "hello"
+                    }
+                ],
+                "value": ""
+            }
+        ]
+    },
+    {
+        "Name": "libvirt_pool",
+        "Fields": [
+            {
+                "Name": "name",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "path",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "type",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            }
+        ]
+    },
+    {
+        "Name": "libvirt_volume",
+        "Fields": [
+            {
+                "Name": "base_volume_id",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "base_volume_name",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "base_volume_pool",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "name",
+                "Type": "String",
+                "Required": true,
+                "value": "hello"
+            },
+            {
+                "Name": "pool",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            },
+            {
+                "Name": "source",
+                "Type": "String",
+                "Required": false,
+                "value": "hello"
+            }
+        ]
+    }
+]
