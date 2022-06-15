@@ -1,16 +1,15 @@
 package router
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"text/template"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/kevinklinger/consilio/model"
-
-	"encoding/json"
-
-	"fmt"
-
-	"io"
 )
 
 func (s *ConsilioRouter) handleCreateProject() httprouter.Handle {
@@ -51,7 +50,24 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			rw.WriteHeader(http.StatusBadRequest)
 			return
 		}
-
+		templ, err := template.New("main.go.template").ParseFiles("./templates/libvirt/main.go.template")
+		if err != nil {
+			fmt.Printf("Faild to generate template: %s\n", err.Error())
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		f, err := os.Create("./templates/libvirt/test.go")
+		if err != nil {
+			fmt.Printf("Faild to create file to write template to: %s\n", err.Error())
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		err = templ.Execute(f, object)
+		if err != nil {
+			fmt.Printf("Faild to execute template: %s\n", err.Error())
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		fmt.Println("Success :)")
 	}
 }
