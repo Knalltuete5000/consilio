@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/julienschmidt/httprouter"
+	validator "github.com/kevinklinger/consilio/libs/validators"
 	"github.com/kevinklinger/consilio/model"
 )
 
@@ -50,6 +51,12 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			rw.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		if !validator.HasRequiredFields(object) {
+			fmt.Printf("Not all required fields are supplied.\n")
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 		templ, err := template.New("main.go.template").ParseFiles("./templates/libvirt/main.go.template")
 		if err != nil {
 			fmt.Printf("Faild to generate template: %s\n", err.Error())

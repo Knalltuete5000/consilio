@@ -33,6 +33,31 @@ func ExtractFields(rscAttr *schema.Resource) []model.FieldType {
 	return fields
 }
 
+func ExtractRequiredFields(rscAttr *schema.Resource) []model.FieldType {
+	var subfields *[]model.FieldType
+	fields := []model.FieldType{}
+
+	for fieldName, fieldAttributes := range rscAttr.Schema {
+		if !fieldAttributes.Computed && fieldAttributes.Required && fieldName != "xml" {
+			if fieldAttributes.Elem != nil {
+				subfields = extractRequiredSubFields(fieldAttributes.Elem, fieldName)
+			}
+
+			fields = append(fields, model.FieldType{
+				Name:          fieldName,
+				Type:          strings.TrimLeft(fieldAttributes.Type.String(), "Type"),
+				Required:      fieldAttributes.Required,
+				Subfields:     subfields,
+				ConflictsWith: fieldAttributes.ConflictsWith,
+				Description:   fieldAttributes.Description,
+				MinItems:      fieldAttributes.MinItems,
+				MaxItems:      fieldAttributes.MaxItems,
+			})
+		}
+	}
+	return fields
+}
+
 func extractSubFields(subfield interface{}, parentName string) *[]model.FieldType {
 	if elem, ok := subfield.(*schema.Resource); ok {
 		result := ExtractFields(elem)
@@ -59,5 +84,43 @@ func extractSubFields(subfield interface{}, parentName string) *[]model.FieldTyp
 	}
 
 	log.Printf("Error converting subelement of %s to schema.Resource \n", parentName)
+	return nil
+}
+
+func ContainesName(name string, names []string) bool {
+	for _, n := range names {
+		if n == name {
+			return true
+		}
+	}
+	return false
+}
+
+func extractRequiredSubFields(subfield interface{}, parentName string) *[]model.FieldType {
+	if elem, ok := subfield.(*schema.Resource); ok {
+		result := ExtractRequiredFields(elem)
+		if len(result) > 0 {
+			return &result
+		}
+		return nil
+	}
+
+	if element, ok := subfield.(*schema.Schema); ok {
+		if !element.Computed && element.Required {
+			return &[]model.FieldType{
+				{
+					Type:          strings.TrimLeft(element.Type.String(), "Type"),
+					Required:      element.Required,
+					ConflictsWith: element.ConflictsWith,
+					Description:   element.Description,
+					MinItems:      element.MinItems,
+					MaxItems:      element.MaxItems,
+				},
+			}
+		}
+		return nil
+	}
+
+	log.Printf("Error converting required subelement of %s to schema.Resource \n", parentName)
 	return nil
 }

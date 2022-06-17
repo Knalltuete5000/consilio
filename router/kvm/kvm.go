@@ -28,6 +28,38 @@ func GetLibvirtFields() []model.DynamicElement {
 	return result
 }
 
+func GetRequiredLibvirtFields() []model.DynamicElement {
+	var result []model.DynamicElement
+
+	for rscName, rscAttr := range provider.ResourcesMap {
+		fields := libs.ExtractRequiredFields(rscAttr)
+		if len(fields) != 0 {
+			result = append(result, model.DynamicElement{
+				Name:   rscName,
+				Fields: fields,
+			})
+		}
+	}
+	return result
+}
+
+func GetRequiredLibvirtFieldsByNames(names []string) []model.DynamicElement {
+	var result []model.DynamicElement
+
+	for rscName, rscAttr := range provider.ResourcesMap {
+		if libs.ContainesName(rscName, names) {
+			fields := libs.ExtractRequiredFields(rscAttr)
+			if len(fields) != 0 {
+				result = append(result, model.DynamicElement{
+					Name:   rscName,
+					Fields: fields,
+				})
+			}
+		}
+	}
+	return result
+}
+
 func ToLibvirtFields(models []model.DynamicElement) map[string]*schema.Resource {
 	var resourceMap map[string]*schema.Resource
 	for _, model := range models {
