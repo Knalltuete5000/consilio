@@ -17,29 +17,37 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 {{range $index, $field := .}}
 
 {{if eq $field.Name "libvirt_cloudinit_disk"}}
-	cloudinit_disk := libvirt.NewCloudinitDisk(stack, &id, &libvirt.CloudinitDiskConfig{
 {{range $f := $field.Fields}}
-{{if eq $f.Name "name"}}
+	{{if eq $f.Name "name"}}
+	cloudinit_disk := libvirt.NewCloudinitDisk(stack, jsii.String("{{$f.Value}}"), &libvirt.CloudinitDiskConfig{
+	{{end}}
+{{end}}
+{{range $f := $field.Fields}}
+	{{if eq $f.Name "name"}}
 		Name: jsii.String("{{$f.Value}}"),
-{{end}}
-{{if eq $f.Name "network_config"}}
+	{{end}}
+	{{if eq $f.Name "network_config"}}
 		NetworkConfig: jsii.String("{{$f.Value}}"),
-{{end}}
-{{if eq $f.Name "meta_data"}}
+	{{end}}
+	{{if eq $f.Name "meta_data"}}
 		MetaData: jsii.String("{{$f.Value}}"),
-{{end}}
-{{if eq $f.Name "pool"}}
+	{{end}}
+	{{if eq $f.Name "pool"}}
 		Pool: jsii.String("{{$f.Value}}"),
-{{end}}
-{{if eq $f.Name "user_data"}}
+	{{end}}
+	{{if eq $f.Name "user_data"}}
 		UserData: jsii.String("{{$f.Value}}"),
-{{end}}
+	{{end}}
 {{end}}
 	})
 {{end}}
 
 {{if eq $field.Name "libvirt_domain"}}
-	domain := libvirt.NewDomain(stack, &id, &libvirt.DomainConfig{
+{{range $f := $field.Fields}}
+	{{if eq $f.Name "name"}}
+	domain := libvirt.NewDomain(stack, jsii.String("{{$f.Value}}"), &libvirt.DomainConfig{
+	{{end}}
+{{end}}
 {{range $f := $field.Fields}}
 	{{if eq $f.Name "autostart"}}
 			Autostart: jsii.Bool({{$f.Value}}),
@@ -216,7 +224,11 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 {{end}}
 
 {{if eq $field.Name "libvirt_ignition"}}
-	ignition := libvirt.NewIgnition(stack, &id, &libvirt.IgnitionConfig{
+{{range $f := $field.Fields}}
+	{{if eq $f.Name "name"}}
+	ignition := libvirt.NewIgnition(stack, jsii.String("{{$f.Value}}"), &libvirt.IgnitionConfig{
+	{{end}}
+{{end}}
 {{range $f := $field.Fields}}
 	{{if eq $f.Name "name"}}
 			Name: jsii.String("{{$f.Value}}"),
@@ -232,7 +244,11 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 {{end}}
 
 {{if eq $field.Name "libvirt_network"}}
-	network := libvirt.NewNetwork(stack, &id, &libvirt.NetworkConfig{
+{{range $f := $field.Fields}}
+	{{if eq $f.Name "name"}}
+	network := libvirt.NewNetwork(stack, jsii.String("{{$f.Value}}"), &libvirt.NetworkConfig{
+	{{end}}
+{{end}}
 {{range $f := $field.Fields}}
 	{{if eq $f.Name "address"}}
 		Address: jsii.Strings(
@@ -327,7 +343,11 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 {{end}}
 
 {{if eq $field.Name "libvirt_pool"}}
-	pool := libvirt.NewPool(stack, &id, &libvirt.PoolConfig{
+{{range $f := $field.Fields}}
+	{{if eq $f.Name "name"}}
+	pool := libvirt.NewPool(stack, jsii.String("{{$f.Value}}"), &libvirt.PoolConfig{
+	{{end}}
+{{end}}
 {{range $f := $field.Fields}}
 	{{if eq $f.Name "name"}}
 		Name: jsii.String("{{$f.Value}}"),
@@ -342,7 +362,11 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	})
 {{end}}
 {{if eq $field.Name "libvirt_volume"}}
-	volume := libvirt.NewVolume(stack, &id, &libvirt.VolumeConfig{
+{{range $f := $field.Fields}}
+	{{if eq $f.Name "name"}}
+	volume := libvirt.NewVolume(stack, jsii.String("{{$f.Value}}"), &libvirt.VolumeConfig{
+	{{end}}
+{{end}}
 {{range $f := $field.Fields}}
 	{{if eq $f.Name "base_volume_id"}}
 		BaseVolumeId: jsii.String("{{$f.Value}}"),
@@ -371,7 +395,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 
 func main() {
 	app := cdktf.NewApp(nil)
-	stack := NewMyStack(app, "learn-cdktf")
+	stack := NewMyStack(app, "consilio-stack")
 	cdktf.NewLocalBackend(stack, &cdktf.LocalBackendProps{
 		Path:         jsii.String("./backend"),
 		WorkspaceDir: jsii.String("./"),
