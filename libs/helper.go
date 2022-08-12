@@ -87,9 +87,9 @@ func extractSubFields(subfield interface{}, parentName string) *[]model.FieldTyp
 	return nil
 }
 
-func ContainesName(name string, names []string) bool {
-	for _, n := range names {
-		if n == name {
+func Contains(contains string, toSearchIn []string) bool {
+	for _, n := range toSearchIn {
+		if n == contains {
 			return true
 		}
 	}

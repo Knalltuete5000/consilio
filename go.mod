@@ -4,6 +4,8 @@ go 1.14
 
 require (
 	github.com/aliyun/terraform-provider-alicloud v1.161.0
+	github.com/aws/constructs-go/constructs/v10 v10.1.58
+	github.com/aws/jsii-runtime-go v1.63.0
 	github.com/dmacvicar/terraform-provider-libvirt v0.6.3
 	github.com/google/martian/v3 v3.2.1
 	github.com/google/uuid v1.3.0 // indirect
@@ -13,6 +15,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.1 // indirect
 	github.com/hashicorp/go-uuid v1.0.2 // indirect
 	github.com/hashicorp/hcl v1.0.0
+	github.com/hashicorp/terraform-cdk-go/cdktf v0.12.0
 	github.com/hashicorp/terraform-exec v0.14.0 // indirect
 	github.com/hashicorp/terraform-plugin-sdk v1.16.1
 	github.com/julienschmidt/httprouter v1.3.0

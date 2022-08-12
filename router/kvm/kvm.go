@@ -47,7 +47,7 @@ func GetRequiredLibvirtFieldsByNames(names []string) []model.DynamicElement {
 	var result []model.DynamicElement
 
 	for rscName, rscAttr := range provider.ResourcesMap {
-		if libs.ContainesName(rscName, names) {
+		if libs.Contains(rscName, names) {
 			fields := libs.ExtractRequiredFields(rscAttr)
 			if len(fields) != 0 {
 				result = append(result, model.DynamicElement{

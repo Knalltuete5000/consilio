@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/kevinklinger/consilio/libs/converters"
 	validator "github.com/kevinklinger/consilio/libs/validators"
 	"github.com/kevinklinger/consilio/model"
 )
@@ -57,7 +58,14 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			return
 		}
 
-		templ, err := template.New("main.go.template").ParseFiles("./templates/libvirt/main.go.template")
+		libvirt_obj, err := converters.ConvertToLibvirtConfig(object)
+		if err != nil {
+			fmt.Printf("Failed to parse objects: %s\n", err.Error())
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		templ, err := template.New("libvirt.go.template").ParseFiles("./templates/libvirt/libvirt.go.template")
 		if err != nil {
 			fmt.Printf("Faild to generate template: %s\n", err.Error())
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -69,7 +77,7 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			rw.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		err = templ.Execute(f, object)
+		err = templ.Execute(f, libvirt_obj)
 		if err != nil {
 			fmt.Printf("Faild to execute template: %s\n", err.Error())
 			rw.WriteHeader(http.StatusInternalServerError)
