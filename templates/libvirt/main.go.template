@@ -154,7 +154,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	{{if eq $f.Name "graphics"}}
 		Graphics: &libvirt.DomainGraphics{
 		{{range $sub := $f.Subfields}}
-			{{if eq $sub.Name "listen_ddress"}}
+			{{if eq $sub.Name "listen_address"}}
 						ListenAddress: jsii.String("{{$sub.Value}}"),
 			{{end}}
 			{{if eq $sub.Name "listen_type"}}

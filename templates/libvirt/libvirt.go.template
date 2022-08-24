@@ -14,8 +14,387 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Uri: jsii.String("qemu:///system"),
 	})
 
+// Pool
+{{if .Pool.createVariable}}
+	{{$.Pool.name}}_pool := libvirt.NewPool(stack, jsii.String("{{$.Pool.name}}"), &libvirt.PoolConfig{
+{{else}}
+	libvirt.NewPool(stack, jsii.String("{{$.Pool.name}}"), &libvirt.PoolConfig{
+{{end}}
+{{range $f := .Pool.Pool.Fields}}
+	{{if eq $f.Name "name"}}
+		Name: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "path"}}
+		Path: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "type"}}
+		Type: jsii.String("{{$f.Value}}"),
+	{{end}}
+{{end}}
+	})
+// Pool end	
 
+// CloudInit
+{{if .CloudInit.createVariable}}
+	{{$.CloudInit.name}}_cloud := libvirt.NewCloudinitDisk(stack, jsii.String("{{$.CloudInit.name}}"), &libvirt.CloudinitDiskConfig{
+{{else}}
+	libvirt.NewCloudinitDisk(stack, jsii.String("{{$.CloudInit.name}}"), &libvirt.CloudinitDiskConfig{
+{{end}}
+{{range $f := .CloudInit.CloudInit.Fields}}
+	{{if eq $f.Name "name"}}
+		Name: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "network_config"}}
+		NetworkConfig: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "meta_data"}}
+		MetaData: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "pool"}}
+		// check if variable for pool was created
+		// true -> iterate over and check for name of pool
+		//	 name found -> depends on
+		// 	 name not found -> no dependencies
+		// false -> no dependencies
+		Pool: jsii.String("{{$f.Value}}"), // TODO check dependency for pool
+	{{end}}
+	{{if eq $f.Name "user_data"}}
+		UserData: jsii.String("{{$f.Value}}"),
+	{{end}}
+{{end}}
+	})
+// CloudInit end
+
+// Ignition
+{{if .Ignition.createVariable}}
+	{{$.Ignition.name}}_ignition := libvirt.NewIgnition(stack, jsii.String("{{$.Ignition.name}}"), &libvirt.IgnitionConfig{
+{{else}}
+	libvirt.NewIgnition(stack, jsii.String("{{$.Ignition.name}}"), &libvirt.IgnitionConfig{
+{{end}}
+{{range $f := .Ignition.Ignition.Fields}}
+	{{if eq $f.Name "name"}}
+			Name: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "content"}}
+		Content: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "pool"}}
+			Pool: jsii.String("{{$f.Value}}"), // TODO check dependency for pool
+	{{end}}
+{{end}}
+	})
+// Ignition end
+
+// Network
+{{if .Network.createVariable}}
+	{{$.Network.name}}_net := libvirt.NewNetwork(stack, jsii.String("{{$.Network.name}}"), &libvirt.NetworkConfig{
+{{else}}
+	libvirt.NewNetwork(stack, jsii.String("{{$.Network.name}}"), &libvirt.NetworkConfig{
+{{end}}
+{{range $f := .Network.Network.Fields}}
+	{{if eq $f.Name "address"}}
+		Address: jsii.Strings(
+		{{range $sub := $f.Subfields}}
+					"{{$sub.Value}}",
+		{{end}}
+		),
+	{{end}}
+	{{if eq $f.Name "dns"}}
+		Dns: &libvirt.NetworkDns{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "forwarders"}}
+			Forwarders: &libvirt.NetworkDnsForwarders{
+				{{range $forwarder := $sub.Subfields}}
+					{{if eq $forwarder.Name "address"}}
+				Address: jsii.String("{{$forwarder.Value}}"),
+					{{end}}
+					{{if eq $forwarder.Name "domain"}}
+					Domain: jsii.String("{{$forwarder.Value}}"),
+					{{end}}
+				{{end}}
+			},
+			{{end}}
+			{{if eq $sub.Name "host"}}
+				Host: &libvirt.NetworkDnsHosts{
+				{{range $host := $sub.Subfields}}
+					{{if eq $host.Name "hostname"}}
+					Hostname: jsii.String("{{$host.Value}}"),
+					{{end}}
+					{{if eq $host.Name "ip"}}
+					Ip: jsii.String("{{$host.Value}}"),
+					{{end}}
+				{{end}}
+				},
+			{{end}}
+			{{if eq $sub.Name "srvs"}}
+				Srvs: &libvirt.NetworkDnsSrvs{
+				{{range $srv := $sub.Subfields}}
+					{{if eq $srv.Name "domain"}}
+					Domain: jsii.String("{{$srv.Value}}"),
+					{{end}}
+					{{if eq $srv.Name "port"}}
+					Port: jsii.String("{{$srv.Value}}"),
+					{{end}}
+					{{if eq $srv.Name "priority"}}
+					Priority: jsii.String("{{$srv.Value}}"),
+					{{end}}	
+					{{if eq $srv.Name "protocol"}}
+					Protocol: jsii.String("{{$srv.Value}}"),
+					{{end}}
+					{{if eq $srv.Name "service"}}
+					Service: jsii.String("{{$srv.Value}}"),
+					{{end}}
+					{{if eq $srv.Name "target"}}
+					Target: jsii.String("{{$srv.Value}}"),
+					{{end}}
+					{{if eq $srv.Name "weight"}}
+					Weight: jsii.String("{{$srv.Value}}"),
+					{{end}}
+				{{end}}
+				},
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+	{{if eq $f.Name "domain"}}
+		Domain: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "mode"}}
+		Mode: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "mtu"}}
+		Mtu: jsii.Number({{$f.Value}}),
+	{{end}}
+	{{if eq $f.Name "name"}}
+		Name: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "routes"}}
+		Routes: &libvirt.NetworkRoutes{
+		{{range $routes := $f.Subfields}}
+			{{if eq $routes.Name "cidr"}}
+			Cidr: jsii.String("{{$routes.Value}}"),
+			{{end}}
+			{{if eq $routes.Name "gateway"}}
+			Gateway: jsii.String("{{$routes.Value}}"),
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+{{end}}
+	})
+// Network end
+
+// Volume
+{{if .Volume.createVariable}}
+	{{$.Volume.name}}_volume := libvirt.NewVolume(stack, jsii.String("{{$.Volume.name}}"), &libvirt.VolumeConfig{
+{{else}}
+	libvirt.NewVolume(stack, jsii.String("{{$.Volume.name}}"), &libvirt.VolumeConfig{
+{{end}}
+{{range %f := .Volume.Volume.Fields}}
+	{{if eq $f.Name "base_volume_id"}}
+		BaseVolumeId: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "base_volume_name"}}
+		BaseVolumeName: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "base_volume_pool"}}
+		BaseVolumePool: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "name"}}
+		Name: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "pool"}}
+		Pool: jsii.String("{{$f.Value}}"), // TODO check dependency for pool
+	{{end}}
+	{{if eq $f.Name "source"}}
+		Source: jsii.String("{{$f.Value}}"),
+	{{end}}
+{{end}}
+	})
+// Volume end
+// Domain
+
+{{if .Domain.createVariable}}
+	{{$.Domain.name}}_domain := libvirt.NewDomain(stack, jsii.String("{{$.Domain.name}}"), &libvirt.DomainConfig{
+{{else}}
+	libvirt.NewDomain(stack, jsii.String("{{$.Domain.name}}"), &libvirt.DomainConfig{
+{{end}}
+{{range $f := .Domain.Domain.Fields}}
+	{{if eq $f.Name "autostart"}}
+			Autostart: jsii.Bool({{$f.Value}}),
+	{{end}}
+	{{if eq $f.Name "boot_device"}}
+		BootDevice: &libvirt.DomainBootDevice{
+			Dev: jsii.Strings(
+		{{range $sub := $f.Subfields}}
+					"{{$sub.Value}}",
+		{{end}}
+			),
+		},
+	{{end}}
+
+	{{if eq $f.Name "cloudinit"}}
+			Cloudinit: jsii.String("{{$f.Value}}"), // TODO check dependency for cloudinit
+	{{end}}
+	{{if eq $f.Name "cmdline"}}
+			Cmdline: jsii.Strings(
+		{{range $sub := $f.Subfields}}
+				"{{$sub.Value}}",
+		{{end}}
+			),
+	{{end}}
+	{{if eq $f.Name "console"}}
+			Console: &libvirt.DomainConsole{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "source_host"}}
+						SourceHost: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "source_path"}}
+						SourcePath: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "source_service"}}
+						SourceService: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "target_port"}}
+						TargetPort: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "target_type"}}
+						TargetType: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "type"}}
+						Type: jsii.String("{{$sub.Value}}"),
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+
+	{{if eq $f.Name "coreos_ignition"}}
+			CoreosIgnition: jsii.String("{{$f.Value}}"), // TODO check dependency for coreos_ignition
+	{{end}}
+	{{if eq $f.Name "cpu"}}
+			Cpu: &libvirt.DomainCpu{
+				Mode: jsii.String("{{$f.Value}}"),
+			},
+	{{end}}
+	{{if eq $f.Name "description"}}
+			Description: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "disk"}}
+			Disk: &libvirt.DomainDisk{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "block_device"}}
+						BlockDevice: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "file"}}
+						File: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "url"}}
+						Url: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "volume_id"}}
+						VolumeId: jsii.String("{{$sub.Value}}"), // FIXME cannot check for volume id because we do not know the volume id when we create the file
+			{{end}}
+			{{if eq $sub.Name "Wwn"}}
+						Wwn: jsii.String("{{$sub.Value}}"),
+			{{end}}
+		{{end}}
+			},
+	{{end}}
+
+	{{if eq $f.Name "filesystem"}}
+		Filesystem: &libvirt.DomainFilesystem{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "accesmode"}}
+						Accessmode: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "source"}}
+						Source: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "target"}}
+						Target: jsii.String("{{$sub.Value}}"),
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+	{{if eq $f.Name "firmware"}}
+			Firmware: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "fw_cfg_name"}}
+			FwCfgName: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "graphics"}}
+		Graphics: &libvirt.DomainGraphics{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "listen_address"}}
+						ListenAddress: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "listen_type"}}
+						ListenType: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "type"}}
+						Type: jsii.String("{{$sub.Value}}"),
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+	{{if eq $f.Name "initrd"}}
+			Initrd: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "kernel"}}
+			Kernel: jsii.String("{{$f.Value}}"), // TODO check dependency for volume
+	{{end}}
+	{{if eq $f.Name "memory"}}
+			Memory: jsii.Number({{$f.Value}}),
+	{{end}}
+	{{if eq $f.Name "metadata"}}
+			Metadata: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "name"}}
+			Name: jsii.String("{{$f.Value}}"),
+	{{end}}
+	{{if eq $f.Name "network_interface"}}
+		NetworkInterfaces: &libvirt.DomainNetworkInterface{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "bridge"}}
+						Bridge: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "macvtap"}}
+						Macvtap: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "passthrough"}}
+						Passthrough: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "vepa"}}
+						Vepa: jsii.String("{{$sub.Value}}"),
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+	{{if eq $f.Name "nvram"}}
+		Nvram: &libvirt.DomainNvram{
+		{{range $sub := $f.Subfields}}
+			{{if eq $sub.Name "file"}}
+			File: jsii.String("{{$sub.Value}}"),
+			{{end}}
+			{{if eq $sub.Name "template"}}
+						Template: jsii.String("{{$sub.Value}}"),
+			{{end}}
+		{{end}}
+		},
+	{{end}}
+	{{if eq $f.Name "vcpu"}}
+		Vcpu: jsii.Number({{$f.Value}}),
+	{{end}}
+	{{if eq $f.Name "video"}}
+		Video: &libvirt.DomainVideo{
+			Type: jsii.String("$f.Subfields[0].Value"),
+		},
+	{{end}}
+{{end}}
+	})
+// Domain end
 }
+
 
 func main() {
 	app := cdktf.NewApp(nil)
