@@ -31,6 +31,7 @@ import (
 	"errors"
 	"fmt"
 
+	helper "github.com/kevinklinger/consilio/libs"
 	"github.com/kevinklinger/consilio/model"
 )
 
@@ -44,33 +45,45 @@ type LibvirtConfig struct {
 }
 
 type LibvirtDomainConfig struct {
-	dependsOn []string
-	Domain    model.DynamicElement
+	name           string
+	createVariable bool
+	dependsOn      []string
+	Domain         model.DynamicElement
 }
 
 type LibvirtPoolConfig struct {
-	dependsOn []string
-	Pool      model.DynamicElement
+	name           string
+	createVariable bool
+	dependsOn      []string
+	Pool           model.DynamicElement
 }
 
 type LibvirtNetworkConfig struct {
-	dependsOn []string
-	Network   model.DynamicElement
+	name           string
+	createVariable bool
+	dependsOn      []string
+	Network        model.DynamicElement
 }
 
 type LibvirtVolumeConfig struct {
-	dependsOn []string
-	Volume    model.DynamicElement
+	name           string
+	createVariable bool
+	dependsOn      []string
+	Volume         model.DynamicElement
 }
 
 type LibvirtCloudInitConfig struct {
-	dependsOn []string
-	CloudInit model.DynamicElement
+	name           string
+	createVariable bool
+	dependsOn      []string
+	CloudInit      model.DynamicElement
 }
 
 type LibvirtIgnitionConfig struct {
-	dependsOn []string
-	Ignition  model.DynamicElement
+	name           string
+	createVariable bool
+	dependsOn      []string
+	Ignition       model.DynamicElement
 }
 
 func ConvertToLibvirtConfig(dynamicElements []model.DynamicElement) (LibvirtConfig, error) {
@@ -80,21 +93,33 @@ func ConvertToLibvirtConfig(dynamicElements []model.DynamicElement) (LibvirtConf
 		case "libvirt_cloudinit_disk":
 			configs.CloudInit.CloudInit = model
 			configs.CloudInit.dependsOn = checkDependenciesForCloudInitConfig(model.Fields, dynamicElements)
+			configs.CloudInit.name = GetName(model.Fields)
+			configs.CloudInit.createVariable = false
 		case "libvirt_domain":
 			configs.Domain.Domain = model
 			configs.Domain.dependsOn = checkDependenciesForDomainConfig(model.Fields, dynamicElements)
+			configs.Domain.name = GetName(model.Fields)
+			configs.Domain.createVariable = false // no other resource can depend on the domain
 		case "libvirt_ignition":
 			configs.Ignition.Ignition = model
 			configs.Ignition.dependsOn = checkDependenciesForIgnitionConfig(model.Fields, dynamicElements)
+			configs.Ignition.name = GetName(model.Fields)
+			configs.Ignition.createVariable = false
 		case "libvirt_network":
 			configs.Network.Network = model
 			configs.Network.dependsOn = checkDependenciesForNetworkConfig(model.Fields, dynamicElements)
+			configs.Network.name = GetName(model.Fields)
+			configs.Network.createVariable = false
 		case "libvirt_pool":
 			configs.Pool.Pool = model
-			configs.Pool.dependsOn = checkDependenciesForNetworkConfig(model.Fields, dynamicElements)
+			configs.Pool.dependsOn = checkDependenciesForPoolConfig(model.Fields, dynamicElements)
+			configs.Pool.name = GetName(model.Fields)
+			configs.Pool.createVariable = false
 		case "libvirt_volume":
 			configs.Volume.Volume = model
 			configs.Volume.dependsOn = checkDependenciesForVolumeConfig(model.Fields, dynamicElements)
+			configs.Volume.name = GetName(model.Fields)
+			configs.Volume.createVariable = false
 		default:
 		}
 	}
@@ -103,6 +128,8 @@ func ConvertToLibvirtConfig(dynamicElements []model.DynamicElement) (LibvirtConf
 	if er != nil {
 		return configs, er
 	}
+
+	checkForVariableCreation(&configs)
 
 	return configs, nil
 }
@@ -119,6 +146,46 @@ func checkCyclicDependencies(config LibvirtConfig) error {
 	}
 
 	return nil
+}
+
+func checkForVariableCreation(config *LibvirtConfig) {
+	// Pool
+	var pool_deps []string
+	pool_deps = append(pool_deps, config.Volume.dependsOn...)
+	pool_deps = append(pool_deps, config.CloudInit.dependsOn...)
+	pool_deps = append(pool_deps, config.Ignition.dependsOn...)
+	if helper.Contains(config.Pool.name, pool_deps) {
+		config.Pool.createVariable = true
+	}
+
+	// Volume
+	var volume_deps []string
+	volume_deps = append(volume_deps, config.Domain.dependsOn...)
+	volume_deps = append(volume_deps, config.Volume.dependsOn...) // in our case this could not happen because of cyclic dependencies but if we had multiple volumes this can be possible
+	if helper.Contains(config.Volume.name, volume_deps) {
+		config.Volume.createVariable = true
+	}
+
+	// CloudInit
+	var cloud_init_deps []string
+	cloud_init_deps = append(cloud_init_deps, config.Domain.dependsOn...)
+	if helper.Contains(config.CloudInit.name, cloud_init_deps) {
+		config.CloudInit.createVariable = true
+	}
+
+	// Ignition
+	var ignition_deps []string
+	ignition_deps = append(ignition_deps, config.Domain.dependsOn...)
+	if helper.Contains(config.Ignition.name, ignition_deps) {
+		config.Ignition.createVariable = true
+	}
+
+	// Network
+	var network_deps []string
+	network_deps = append(network_deps, config.Domain.dependsOn...)
+	if helper.Contains(config.Network.name, network_deps) {
+		config.Network.createVariable = true
+	}
 }
 
 func checkDependenciesForCloudInitConfig(cloudinit []model.FieldType, models []model.DynamicElement) []string {
