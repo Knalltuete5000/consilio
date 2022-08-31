@@ -15,10 +15,11 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	})
 
 // Pool
-{{if .Pool.createVariable}}
-	{{$.Pool.name}}_pool := libvirt.NewPool(stack, jsii.String("{{$.Pool.name}}"), &libvirt.PoolConfig{
+{{if .Pool}}
+{{if .Pool.CreateVariable}}
+	{{$.Pool.Name}}_pool := libvirt.NewPool(stack, jsii.String("{{$.Pool.Name}}"), &libvirt.PoolConfig{
 {{else}}
-	libvirt.NewPool(stack, jsii.String("{{$.Pool.name}}"), &libvirt.PoolConfig{
+	libvirt.NewPool(stack, jsii.String("{{$.Pool.Name}}"), &libvirt.PoolConfig{
 {{end}}
 {{range $f := .Pool.Pool.Fields}}
 	{{if eq $f.Name "name"}}
@@ -32,14 +33,18 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	{{end}}
 {{end}}
 	})
+{{end}}
 // Pool end	
 
 // CloudInit
-{{if .CloudInit.createVariable}}
-	{{$.CloudInit.name}}_cloud := libvirt.NewCloudinitDisk(stack, jsii.String("{{$.CloudInit.name}}"), &libvirt.CloudinitDiskConfig{
+{{if .CloudInit}}
+{{if .CloudInit.CreateVariable}}
+	{{$.CloudInit.Name}}_cloud := libvirt.NewCloudinitDisk(stack, jsii.String("{{$.CloudInit.Name}}"), &libvirt.CloudinitDiskConfig{
 {{else}}
-	libvirt.NewCloudinitDisk(stack, jsii.String("{{$.CloudInit.name}}"), &libvirt.CloudinitDiskConfig{
+	libvirt.NewCloudinitDisk(stack, jsii.String("{{$.CloudInit.Name}}"), &libvirt.CloudinitDiskConfig{
 {{end}}
+{{$pool := .Pool}}
+{{$cloud_init := .CloudInit}}
 {{range $f := .CloudInit.CloudInit.Fields}}
 	{{if eq $f.Name "name"}}
 		Name: jsii.String("{{$f.Value}}"),
@@ -51,26 +56,44 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		MetaData: jsii.String("{{$f.Value}}"),
 	{{end}}
 	{{if eq $f.Name "pool"}}
-		// check if variable for pool was created
-		// true -> iterate over and check for name of pool
-		//	 name found -> depends on
-		// 	 name not found -> no dependencies
-		// false -> no dependencies
-		Pool: jsii.String("{{$f.Value}}"), // TODO check dependency for pool
+		{{if $pool.CreateVariable}}
+			{{$length := len $cloud_init.DependsOn}}
+			{{if gt $length 0}}
+				{{$pool_cloudinit_created := 0}}
+				{{range $dep := $cloud_init.DependsOn}}
+					{{if eq $f.Value $dep}}
+		Pool: {{$pool.Name}}_pool.Name(),
+						{{$pool_cloudinit_created := 1}}
+						{{break}}
+					{{end}}
+				{{end}}
+				{{if eq $pool_cloudinit_created 0}}
+		Pool: jsii.String("{{$f.Value}}"),
+				{{end}}
+			{{else}}
+		Pool: jsii.String("{{$f.Value}}"),
+			{{end}}
+		{{else}}
+		Pool: jsii.String("{{$f.Value}}"),
+		{{end}}
 	{{end}}
 	{{if eq $f.Name "user_data"}}
 		UserData: jsii.String("{{$f.Value}}"),
 	{{end}}
 {{end}}
 	})
+{{end}}
 // CloudInit end
 
 // Ignition
-{{if .Ignition.createVariable}}
-	{{$.Ignition.name}}_ignition := libvirt.NewIgnition(stack, jsii.String("{{$.Ignition.name}}"), &libvirt.IgnitionConfig{
+{{if .Ignition}}
+{{if .Ignition.CreateVariable}}
+	{{$.Ignition.Name}}_ignition := libvirt.NewIgnition(stack, jsii.String("{{$.Ignition.Name}}"), &libvirt.IgnitionConfig{
 {{else}}
-	libvirt.NewIgnition(stack, jsii.String("{{$.Ignition.name}}"), &libvirt.IgnitionConfig{
+	libvirt.NewIgnition(stack, jsii.String("{{$.Ignition.Name}}"), &libvirt.IgnitionConfig{
 {{end}}
+{{$ignition := .Ignition}}
+{{$pool := .Pool}}
 {{range $f := .Ignition.Ignition.Fields}}
 	{{if eq $f.Name "name"}}
 			Name: jsii.String("{{$f.Value}}"),
@@ -79,17 +102,38 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Content: jsii.String("{{$f.Value}}"),
 	{{end}}
 	{{if eq $f.Name "pool"}}
-			Pool: jsii.String("{{$f.Value}}"), // TODO check dependency for pool
+		{{if $pool.CreateVariable}}
+			{{$length := len $ignition.DependsOn }}
+			{{if gt $length 0}}
+				{{$pool_ignition_created := 0}}
+				{{range $dep := $ignition.DependsOn}}
+					{{if eq $f.Value $dep}}
+		Pool: {{$pool.Name}}_pool.Name(),
+						{{$pool_ignition_created := 1}}
+						{{break}}
+					{{end}}
+				{{end}}
+				{{if eq $pool_ignition_created 0}}
+		Pool: jsii.String("{{$f.Value}}"),
+				{{end}}
+			{{else}}
+		Pool: jsii.String("{{$f.Value}}"),
+			{{end}}
+		{{else}}
+		Pool: jsii.String("{{$f.Value}}"),
+		{{end}}
 	{{end}}
 {{end}}
 	})
+{{end}}
 // Ignition end
 
 // Network
-{{if .Network.createVariable}}
-	{{$.Network.name}}_net := libvirt.NewNetwork(stack, jsii.String("{{$.Network.name}}"), &libvirt.NetworkConfig{
+{{ if .Network}}
+{{if .Network.CreateVariable}}
+	{{$.Network.Name}}_net := libvirt.NewNetwork(stack, jsii.String("{{$.Network.Name}}"), &libvirt.NetworkConfig{
 {{else}}
-	libvirt.NewNetwork(stack, jsii.String("{{$.Network.name}}"), &libvirt.NetworkConfig{
+	libvirt.NewNetwork(stack, jsii.String("{{$.Network.Name}}"), &libvirt.NetworkConfig{
 {{end}}
 {{range $f := .Network.Network.Fields}}
 	{{if eq $f.Name "address"}}
@@ -182,15 +226,19 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	{{end}}
 {{end}}
 	})
+{{end}}
 // Network end
 
 // Volume
-{{if .Volume.createVariable}}
-	{{$.Volume.name}}_volume := libvirt.NewVolume(stack, jsii.String("{{$.Volume.name}}"), &libvirt.VolumeConfig{
+{{if .Volume}}
+{{if .Volume.CreateVariable}}
+	{{$.Volume.Name}}_volume := libvirt.NewVolume(stack, jsii.String("{{$.Volume.Name}}"), &libvirt.VolumeConfig{
 {{else}}
-	libvirt.NewVolume(stack, jsii.String("{{$.Volume.name}}"), &libvirt.VolumeConfig{
+	libvirt.NewVolume(stack, jsii.String("{{$.Volume.Name}}"), &libvirt.VolumeConfig{
 {{end}}
-{{range %f := .Volume.Volume.Fields}}
+{{$pool := .Pool}}
+{{$volume := .Volume}}
+{{range $f := .Volume.Volume.Fields}}
 	{{if eq $f.Name "base_volume_id"}}
 		BaseVolumeId: jsii.String("{{$f.Value}}"),
 	{{end}}
@@ -204,21 +252,50 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		Name: jsii.String("{{$f.Value}}"),
 	{{end}}
 	{{if eq $f.Name "pool"}}
-		Pool: jsii.String("{{$f.Value}}"), // TODO check dependency for pool
+		{{if eq $f.Name "pool"}}
+		
+		{{if $pool.CreateVariable}}
+			{{$length := len $volume.DependsOn}}
+			{{if gt $length 0}}
+				{{$pool_volume_created := 0}}
+				{{range $dep := $volume.DependsOn}}
+					{{if eq $f.Value $dep}}
+		Pool: {{$pool.Name}}_pool.Name(),
+						{{$pool_volume_created := 1}}
+						{{break}}
+					{{end}}
+				{{end}}
+				{{if eq $pool_volume_created 0}}
+		Pool: jsii.String("{{$f.Value}}"),
+				{{end}}
+			{{else}}
+		Pool: jsii.String("{{$f.Value}}"),
+			{{end}}
+		{{else}}
+		Pool: jsii.String("{{$f.Value}}"),
+		{{end}}
+	{{end}}
 	{{end}}
 	{{if eq $f.Name "source"}}
 		Source: jsii.String("{{$f.Value}}"),
 	{{end}}
 {{end}}
 	})
-// Volume end
-// Domain
-
-{{if .Domain.createVariable}}
-	{{$.Domain.name}}_domain := libvirt.NewDomain(stack, jsii.String("{{$.Domain.name}}"), &libvirt.DomainConfig{
-{{else}}
-	libvirt.NewDomain(stack, jsii.String("{{$.Domain.name}}"), &libvirt.DomainConfig{
 {{end}}
+// Volume end
+
+// Domain
+{{if .Domain}}
+{{if .Domain.CreateVariable}}
+	{{$.Domain.Name}}_domain := libvirt.NewDomain(stack, jsii.String("{{$.Domain.Name}}"), &libvirt.DomainConfig{
+{{else}}
+	libvirt.NewDomain(stack, jsii.String("{{$.Domain.Name}}"), &libvirt.DomainConfig{
+{{end}}
+{{$domain := .Domain}}
+{{$volume := .Volume}}
+{{$cloudInit := .CloudInit}}
+{{$pool := .Pool}}
+{{$coreosIgnition := .Ignition}}
 {{range $f := .Domain.Domain.Fields}}
 	{{if eq $f.Name "autostart"}}
 			Autostart: jsii.Bool({{$f.Value}}),
@@ -234,7 +311,26 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	{{end}}
 
 	{{if eq $f.Name "cloudinit"}}
-			Cloudinit: jsii.String("{{$f.Value}}"), // TODO check dependency for cloudinit
+		{{if $cloudInit.CreateVariable}}
+			{{$length := len $domain.DependsOn}}
+			{{if gt $length 0}}
+				{{$cloud_domain_created := 0}}
+				{{range $dep := $domain.DependsOn}}
+					{{if eq $f.Value $dep}}
+			Cloudinit: {{$cloudInit.Name}}_cloud.Name(),
+						{{$cloud_domain_created := 1}}
+						{{break}}
+					{{end}}
+				{{end}}
+				{{if eq $cloud_domain_created 0}}
+			Cloudinit: jsii.String("{{$f.Value}}"),
+				{{end}}
+			{{else}}
+			Cloudinit: jsii.String("{{$f.Value}}"),
+			{{end}}
+		{{else}}
+			Cloudinit: jsii.String("{{$f.Value}}"),
+		{{end}}
 	{{end}}
 	{{if eq $f.Name "cmdline"}}
 			Cmdline: jsii.Strings(
@@ -269,7 +365,26 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	{{end}}
 
 	{{if eq $f.Name "coreos_ignition"}}
-			CoreosIgnition: jsii.String("{{$f.Value}}"), // TODO check dependency for coreos_ignition
+		{{if $coreosIgnition.CreateVariable}}
+			{{$length := len $domain.DependsOn}}
+			{{if gt $length 0}}
+				{{$domain_coreos_ignition_created := 0}}
+				{{range $dep := $domain.DependsOn}}
+					{{if eq $f.Value $dep}}
+		CoreosIgnition: {{$coreosIgnition.Name}}_ignition.Name(),
+						{{$domain_coreos_ignition_created := 1}}
+						{{break}}
+					{{end}}
+				{{end}}
+				{{if eq $domain_coreos_ignition_created 0}}
+		CoreosIgnition: jsii.String("{{$f.Value}}"),
+				{{end}}
+			{{else}}
+		CoreosIgnition: jsii.String("{{$f.Value}}"),
+			{{end}}
+		{{else}}
+		CoreosIgnition: jsii.String("{{$f.Value}}"),
+		{{end}}
 	{{end}}
 	{{if eq $f.Name "cpu"}}
 			Cpu: &libvirt.DomainCpu{
@@ -341,7 +456,26 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 			Initrd: jsii.String("{{$f.Value}}"),
 	{{end}}
 	{{if eq $f.Name "kernel"}}
-			Kernel: jsii.String("{{$f.Value}}"), // TODO check dependency for volume
+		{{if $volume.CreateVariable}}
+			{{$length := len $domain.DependsOn}}
+			{{if gt $length 0}}
+				{{$volume_kernel_created := 0}}
+				{{range $dep := $domain.DependsOn}}
+					{{if eq $f.Value $dep}}
+			Kernel: {{$volume.Name}}_volume.Name(),
+						{{$volume_kernel_created := 1}}
+						{{break}}
+					{{end}}
+				{{end}}
+				{{if eq $volume_kernel_created 0}}
+			Kernel: jsii.String("{{$f.Value}}"),
+				{{end}}
+			{{else}}
+			Kernel: jsii.String("{{$f.Value}}"),
+			{{end}}
+		{{else}}
+			Kernel: jsii.String("{{$f.Value}}"),
+		{{end}}
 	{{end}}
 	{{if eq $f.Name "memory"}}
 			Memory: jsii.Number({{$f.Value}}),
@@ -392,7 +526,9 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	{{end}}
 {{end}}
 	})
+{{end}}
 // Domain end
+	return stack
 }
 
 

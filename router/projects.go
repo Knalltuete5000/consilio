@@ -43,6 +43,8 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			fmt.Printf("Failed to read body %s\n", err.Error())
 			rw.WriteHeader(http.StatusInternalServerError)
 			return
+		} else {
+			fmt.Printf("Data read\n")
 		}
 
 		var object []model.DynamicElement
@@ -51,11 +53,16 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			fmt.Printf("Failed to parse data %s\n", err.Error())
 			rw.WriteHeader(http.StatusBadRequest)
 			return
+		} else {
+			fmt.Printf("Parsed json successfully\n")
 		}
+
 		if !validator.HasRequiredFields(object) {
 			fmt.Printf("Not all required fields are supplied.\n")
 			rw.WriteHeader(http.StatusBadRequest)
 			return
+		} else {
+			fmt.Printf("Pased require check\n")
 		}
 
 		libvirt_obj, err := converters.ConvertToLibvirtConfig(object)
@@ -63,6 +70,8 @@ func (s *ConsilioRouter) handleUpdateProject() httprouter.Handle {
 			fmt.Printf("Failed to parse objects: %s\n", err.Error())
 			rw.WriteHeader(http.StatusInternalServerError)
 			return
+		} else {
+			fmt.Printf("Converted to new libvirt objects\n")
 		}
 
 		templ, err := template.New("libvirt.go.template").ParseFiles("./templates/libvirt/libvirt.go.template")

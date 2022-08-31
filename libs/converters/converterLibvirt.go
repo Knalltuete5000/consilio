@@ -36,53 +36,53 @@ import (
 )
 
 type LibvirtConfig struct {
-	Domain    *LibvirtDomainConfig // for a typical terraform provider this should be arrays instead of a single object
-	Pool      *LibvirtPoolConfig
-	Network   *LibvirtNetworkConfig
-	Volume    *LibvirtVolumeConfig
-	CloudInit *LibvirtCloudInitConfig
-	Ignition  *LibvirtIgnitionConfig
+	Domain    LibvirtDomainConfig // for a typical terraform provider this should be arrays instead of a single object
+	Pool      LibvirtPoolConfig
+	Network   LibvirtNetworkConfig
+	Volume    LibvirtVolumeConfig
+	CloudInit LibvirtCloudInitConfig
+	Ignition  LibvirtIgnitionConfig
 }
 
 type LibvirtDomainConfig struct {
-	name           string
-	createVariable bool
-	dependsOn      []string
+	Name           string
+	CreateVariable bool
+	DependsOn      []string
 	Domain         model.DynamicElement
 }
 
 type LibvirtPoolConfig struct {
-	name           string
-	createVariable bool
-	dependsOn      []string
+	Name           string
+	CreateVariable bool
+	DependsOn      []string
 	Pool           model.DynamicElement
 }
 
 type LibvirtNetworkConfig struct {
-	name           string
-	createVariable bool
-	dependsOn      []string
+	Name           string
+	CreateVariable bool
+	DependsOn      []string
 	Network        model.DynamicElement
 }
 
 type LibvirtVolumeConfig struct {
-	name           string
-	createVariable bool
-	dependsOn      []string
+	Name           string
+	CreateVariable bool
+	DependsOn      []string
 	Volume         model.DynamicElement
 }
 
 type LibvirtCloudInitConfig struct {
-	name           string
-	createVariable bool
-	dependsOn      []string
+	Name           string
+	CreateVariable bool
+	DependsOn      []string
 	CloudInit      model.DynamicElement
 }
 
 type LibvirtIgnitionConfig struct {
-	name           string
-	createVariable bool
-	dependsOn      []string
+	Name           string
+	CreateVariable bool
+	DependsOn      []string
 	Ignition       model.DynamicElement
 }
 
@@ -92,34 +92,34 @@ func ConvertToLibvirtConfig(dynamicElements []model.DynamicElement) (LibvirtConf
 		switch model.Name {
 		case "libvirt_cloudinit_disk":
 			configs.CloudInit.CloudInit = model
-			configs.CloudInit.dependsOn = checkDependenciesForCloudInitConfig(model.Fields, dynamicElements)
-			configs.CloudInit.name = GetName(model.Fields)
-			configs.CloudInit.createVariable = false
+			configs.CloudInit.DependsOn = checkDependenciesForCloudInitConfig(model.Fields, dynamicElements)
+			configs.CloudInit.Name = GetName(model.Fields)
+			configs.CloudInit.CreateVariable = false
 		case "libvirt_domain":
 			configs.Domain.Domain = model
-			configs.Domain.dependsOn = checkDependenciesForDomainConfig(model.Fields, dynamicElements)
-			configs.Domain.name = GetName(model.Fields)
-			configs.Domain.createVariable = false // no other resource can depend on the domain
+			configs.Domain.DependsOn = checkDependenciesForDomainConfig(model.Fields, dynamicElements)
+			configs.Domain.Name = GetName(model.Fields)
+			configs.Domain.CreateVariable = false // no other resource can depend on the domain
 		case "libvirt_ignition":
 			configs.Ignition.Ignition = model
-			configs.Ignition.dependsOn = checkDependenciesForIgnitionConfig(model.Fields, dynamicElements)
-			configs.Ignition.name = GetName(model.Fields)
-			configs.Ignition.createVariable = false
+			configs.Ignition.DependsOn = checkDependenciesForIgnitionConfig(model.Fields, dynamicElements)
+			configs.Ignition.Name = GetName(model.Fields)
+			configs.Ignition.CreateVariable = false
 		case "libvirt_network":
 			configs.Network.Network = model
-			configs.Network.dependsOn = checkDependenciesForNetworkConfig(model.Fields, dynamicElements)
-			configs.Network.name = GetName(model.Fields)
-			configs.Network.createVariable = false
+			configs.Network.DependsOn = checkDependenciesForNetworkConfig(model.Fields, dynamicElements)
+			configs.Network.Name = GetName(model.Fields)
+			configs.Network.CreateVariable = false
 		case "libvirt_pool":
 			configs.Pool.Pool = model
-			configs.Pool.dependsOn = checkDependenciesForPoolConfig(model.Fields, dynamicElements)
-			configs.Pool.name = GetName(model.Fields)
-			configs.Pool.createVariable = false
+			configs.Pool.DependsOn = checkDependenciesForPoolConfig(model.Fields, dynamicElements)
+			configs.Pool.Name = GetName(model.Fields)
+			configs.Pool.CreateVariable = false
 		case "libvirt_volume":
 			configs.Volume.Volume = model
-			configs.Volume.dependsOn = checkDependenciesForVolumeConfig(model.Fields, dynamicElements)
-			configs.Volume.name = GetName(model.Fields)
-			configs.Volume.createVariable = false
+			configs.Volume.DependsOn = checkDependenciesForVolumeConfig(model.Fields, dynamicElements)
+			configs.Volume.Name = GetName(model.Fields)
+			configs.Volume.CreateVariable = false
 		default:
 		}
 	}
@@ -136,12 +136,12 @@ func ConvertToLibvirtConfig(dynamicElements []model.DynamicElement) (LibvirtConf
 
 func checkCyclicDependencies(config LibvirtConfig) error {
 	// volume does not refer to itself
-	if config.Volume != nil {
-		var name string = GetName(config.Volume.Volume.Fields)
-		for _, dep := range config.Volume.dependsOn {
-			if dep == name {
-				return errors.New("volume depends on itself")
-			}
+	// FIXME We only check on the name of the volume
+	// If a pool has the same name as the volume, it is recognized as a cyclice dependency
+	var name string = GetName(config.Volume.Volume.Fields)
+	for _, dep := range config.Volume.DependsOn {
+		if dep == name {
+			return errors.New("volume depends on itself")
 		}
 	}
 
@@ -151,40 +151,40 @@ func checkCyclicDependencies(config LibvirtConfig) error {
 func checkForVariableCreation(config *LibvirtConfig) {
 	// Pool
 	var pool_deps []string
-	pool_deps = append(pool_deps, config.Volume.dependsOn...)
-	pool_deps = append(pool_deps, config.CloudInit.dependsOn...)
-	pool_deps = append(pool_deps, config.Ignition.dependsOn...)
-	if helper.Contains(config.Pool.name, pool_deps) {
-		config.Pool.createVariable = true
+	pool_deps = append(pool_deps, config.Volume.DependsOn...)
+	pool_deps = append(pool_deps, config.CloudInit.DependsOn...)
+	pool_deps = append(pool_deps, config.Ignition.DependsOn...)
+	if helper.Contains(config.Pool.Name, pool_deps) {
+		config.Pool.CreateVariable = true
 	}
 
 	// Volume
 	var volume_deps []string
-	volume_deps = append(volume_deps, config.Domain.dependsOn...)
-	volume_deps = append(volume_deps, config.Volume.dependsOn...) // in our case this could not happen because of cyclic dependencies but if we had multiple volumes this can be possible
-	if helper.Contains(config.Volume.name, volume_deps) {
-		config.Volume.createVariable = true
+	volume_deps = append(volume_deps, config.Domain.DependsOn...)
+	volume_deps = append(volume_deps, config.Volume.DependsOn...) // in our case this could not happen because of cyclic dependencies but if we had multiple volumes this can be possible
+	if helper.Contains(config.Volume.Name, volume_deps) {
+		config.Volume.CreateVariable = true
 	}
 
 	// CloudInit
 	var cloud_init_deps []string
-	cloud_init_deps = append(cloud_init_deps, config.Domain.dependsOn...)
-	if helper.Contains(config.CloudInit.name, cloud_init_deps) {
-		config.CloudInit.createVariable = true
+	cloud_init_deps = append(cloud_init_deps, config.Domain.DependsOn...)
+	if helper.Contains(config.CloudInit.Name, cloud_init_deps) {
+		config.CloudInit.CreateVariable = true
 	}
 
 	// Ignition
 	var ignition_deps []string
-	ignition_deps = append(ignition_deps, config.Domain.dependsOn...)
-	if helper.Contains(config.Ignition.name, ignition_deps) {
-		config.Ignition.createVariable = true
+	ignition_deps = append(ignition_deps, config.Domain.DependsOn...)
+	if helper.Contains(config.Ignition.Name, ignition_deps) {
+		config.Ignition.CreateVariable = true
 	}
 
 	// Network
 	var network_deps []string
-	network_deps = append(network_deps, config.Domain.dependsOn...)
-	if helper.Contains(config.Network.name, network_deps) {
-		config.Network.createVariable = true
+	network_deps = append(network_deps, config.Domain.DependsOn...)
+	if helper.Contains(config.Network.Name, network_deps) {
+		config.Network.CreateVariable = true
 	}
 }
 
@@ -192,7 +192,7 @@ func checkDependenciesForCloudInitConfig(cloudinit []model.FieldType, models []m
 	var deps []string
 	// check for pool (field pool)
 	// get pool
-	var pool_name = fmt.Sprint(GetFieldValue(cloudinit, "name"))
+	var pool_name = fmt.Sprint(GetFieldValue(cloudinit, "pool"))
 
 	for _, m := range models {
 		if m.Name == "libvirt_pool" {
